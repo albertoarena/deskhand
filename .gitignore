@@ -1,1 +1,5 @@
 .docs/
+/vendor/
+/build/
+/.phpunit.cache/
+.phpunit.result.cache
