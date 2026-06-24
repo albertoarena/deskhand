@@ -474,7 +474,8 @@ The two Concepts pages draw directly from `docs/isolation-model.md` and `docs/sa
 
 1. **Project skeleton:** `composer.json` (`^8.3`), Symfony Console wiring, `bin/deskhand`, PHP version guard, Pint/PHPStan/Pest configured, CI `tests.yml` green on an empty suite.
 2. **Core interfaces + fakes:** define all interfaces (§3.2) and their test fakes first.
-3. **Core subsystems, test-first:** Naming (slug/ports/db-names), Config (loader + defaults + hook substitution), Registry (JSON), EnvMaterializer, CapabilityDetector, DatabaseProvisioner (SQLite first, then MySQL).
+3. **Core subsystems, test-first:** Naming (slug/ports/db-names), Config (loader + defaults + `DESKHAND_*` hook env), Registry (JSON), EnvMaterializer, CapabilityDetector, DatabaseProvisioner (SQLite first, then MySQL).
+   - **Split into reviewable sub-commits**, each with its own review gate and all checks green before the next: (3a) Naming → (3b) Config → (3c) Registry (JSON) → (3d) EnvMaterializer → (3e) CapabilityDetector → (3f) DatabaseProvisioner (SQLite, then MySQL). This keeps each unit small enough to review and bisect, rather than landing the whole phase in one commit.
 4. **Concrete Git/Process implementations.**
 5. **LaravelProfile.**
 6. **Commands, test-first:** `up`, then `down` (with the safety-invariant tests), then `list`, `status`.
