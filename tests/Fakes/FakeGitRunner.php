@@ -14,6 +14,9 @@ final class FakeGitRunner implements GitRunner
     /** When set, repositoryRoot() returns this regardless of the directory. */
     public ?string $root = null;
 
+    /** When true, removeWorktree() throws — to exercise best-effort teardown. */
+    public bool $failRemoveWorktree = false;
+
     /** @var list<string> */
     private array $branches = [];
 
@@ -51,6 +54,10 @@ final class FakeGitRunner implements GitRunner
 
     public function removeWorktree(string $repositoryRoot, string $path, bool $force = false): void
     {
+        if ($this->failRemoveWorktree) {
+            throw new \RuntimeException('worktree is busy');
+        }
+
         $this->worktrees[$repositoryRoot] = array_values(array_filter(
             $this->worktrees[$repositoryRoot] ?? [],
             fn (GitWorktree $worktree): bool => $worktree->path !== $path,

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Deskhand\Console;
 
+use Deskhand\Console\Command\DownCommand;
 use Deskhand\Console\Command\UpCommand;
+use Deskhand\Down\DefaultDownRunnerFactory;
 use Deskhand\Up\DefaultUpRunnerFactory;
 use Symfony\Component\Console\Application as BaseApplication;
 
@@ -25,5 +27,6 @@ final class Application extends BaseApplication
         parent::__construct(self::NAME, self::VERSION);
 
         $this->addCommand(new UpCommand(new DefaultUpRunnerFactory));
+        $this->addCommand(new DownCommand(new DefaultDownRunnerFactory));
     }
 }
