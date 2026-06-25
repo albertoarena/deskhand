@@ -16,6 +16,38 @@ use Deskhand\Core\Registry\WorktreeRecord;
  */
 
 /**
+ * Create a unique, empty temporary directory for filesystem-touching tests.
+ */
+function deskhandTempDir(): string
+{
+    $dir = sys_get_temp_dir().'/deskhand-'.bin2hex(random_bytes(6));
+    mkdir($dir, 0o775, true);
+
+    return $dir;
+}
+
+/**
+ * Recursively remove a directory created by {@see deskhandTempDir()}.
+ */
+function deskhandRemoveDir(string $dir): void
+{
+    if (! is_dir($dir)) {
+        return;
+    }
+
+    $items = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS),
+        RecursiveIteratorIterator::CHILD_FIRST,
+    );
+
+    foreach ($items as $item) {
+        $item->isDir() ? rmdir($item->getPathname()) : unlink($item->getPathname());
+    }
+
+    rmdir($dir);
+}
+
+/**
  * A canonical SQLite worktree record matching the §5.1 example shape,
  * shared across registry/record tests.
  */
