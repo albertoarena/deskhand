@@ -45,12 +45,25 @@ interface StackProfile
     /** Create required storage directories and the storage symlink. */
     public function provisionStorage(string $worktreePath): void;
 
-    /** Run migrations against $databaseName (connection set via environment). */
-    public function migrate(string $worktreePath, string $databaseName): void;
+    /**
+     * Run migrations against $databaseName (connection set via environment).
+     * $env carries the DESKHAND_* worktree facts (§9) for the command to read.
+     *
+     * @param  array<string, string>  $env
+     */
+    public function migrate(string $worktreePath, string $databaseName, array $env = []): void;
 
-    /** Run the seeder. */
-    public function seed(string $worktreePath): void;
+    /**
+     * Run the seeder.
+     *
+     * @param  array<string, string>  $env  DESKHAND_* worktree facts (§9)
+     */
+    public function seed(string $worktreePath, array $env = []): void;
 
-    /** Run the verification suite; true only when it is green. */
-    public function verify(string $worktreePath): bool;
+    /**
+     * Run the verification suite; true only when it is green.
+     *
+     * @param  array<string, string>  $env  DESKHAND_* worktree facts (§9)
+     */
+    public function verify(string $worktreePath, array $env = []): bool;
 }

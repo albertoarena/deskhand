@@ -114,6 +114,9 @@ final class UpRunner
         );
         $notify('env: materialized .env and .env.testing');
 
+        // The DESKHAND_* worktree facts ride along with every command (§9).
+        $deskhandEnv = $this->deskhandEnv($record);
+
         // 5. Dependencies.
         $composer = $this->process->run(['composer', 'install', '--no-interaction'], $worktreePath);
 
@@ -141,23 +144,21 @@ final class UpRunner
         if ($request->shared) {
             $notify('database: skipped migrate and seed (shared, read-only)');
         } else {
-            $this->profile->migrate($worktreePath, $record->db->main);
+            $this->profile->migrate($worktreePath, $record->db->main, $deskhandEnv);
 
             foreach ($record->db->testDbs as $testDb) {
-                $this->profile->migrate($worktreePath, $testDb);
+                $this->profile->migrate($worktreePath, $testDb, $deskhandEnv);
             }
 
             $notify('database: migrated');
 
             if ($this->config->seed) {
-                $this->profile->seed($worktreePath);
+                $this->profile->seed($worktreePath, $deskhandEnv);
                 $notify('database: seeded');
             }
         }
 
         // 10. post_up_hooks (verbatim, with the DESKHAND_* facts).
-        $deskhandEnv = $this->deskhandEnv($record);
-
         foreach ($this->config->postUpHooks as $hook) {
             $result = $this->process->runShell($hook, $worktreePath, $deskhandEnv);
 
@@ -172,7 +173,7 @@ final class UpRunner
         $envauditSkipped = $this->runEnvaudit($request, $worktreePath, $deskhandEnv, $notify);
 
         // 12. Verify.
-        [$verified, $verifySkipped] = $this->verify($request, $worktreePath, $notify);
+        [$verified, $verifySkipped] = $this->verify($request, $worktreePath, $deskhandEnv, $notify);
 
         // 13. Finalize registry & report.
         $this->registry->save($record);
@@ -288,10 +289,11 @@ final class UpRunner
     }
 
     /**
+     * @param  array<string, string>  $deskhandEnv
      * @param  callable(string): void  $notify
      * @return array{0: bool, 1: bool} [verified, skipped]
      */
-    private function verify(UpRequest $request, string $worktreePath, callable $notify): array
+    private function verify(UpRequest $request, string $worktreePath, array $deskhandEnv, callable $notify): array
     {
         if ($request->skipVerify) {
             $notify('verify: skipped');
@@ -299,7 +301,7 @@ final class UpRunner
             return [false, true];
         }
 
-        if (! $this->profile->verify($worktreePath)) {
+        if (! $this->profile->verify($worktreePath, $deskhandEnv)) {
             throw new VerificationFailedException('The verification suite failed.');
         }
 

@@ -20,6 +20,12 @@ final class FakeStackProfile implements StackProfile
     /** @var list<string> database names passed to migrate() */
     public array $migrated = [];
 
+    /** @var array<string, string> env passed to the last migrate() */
+    public array $migrateEnv = [];
+
+    /** @var array<string, string> env passed to the last verify() */
+    public array $verifyEnv = [];
+
     public bool $appKeyGenerated = false;
 
     public bool $storageProvisioned = false;
@@ -51,18 +57,21 @@ final class FakeStackProfile implements StackProfile
         $this->storageProvisioned = true;
     }
 
-    public function migrate(string $worktreePath, string $databaseName): void
+    public function migrate(string $worktreePath, string $databaseName, array $env = []): void
     {
         $this->migrated[] = $databaseName;
+        $this->migrateEnv = $env;
     }
 
-    public function seed(string $worktreePath): void
+    public function seed(string $worktreePath, array $env = []): void
     {
         $this->seeded = true;
     }
 
-    public function verify(string $worktreePath): bool
+    public function verify(string $worktreePath, array $env = []): bool
     {
+        $this->verifyEnv = $env;
+
         return $this->verifyResult;
     }
 }

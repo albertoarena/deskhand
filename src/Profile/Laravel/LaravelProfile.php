@@ -110,30 +110,33 @@ final class LaravelProfile implements StackProfile
         }
     }
 
-    public function migrate(string $worktreePath, string $databaseName): void
+    public function migrate(string $worktreePath, string $databaseName, array $env = []): void
     {
         // Target the database by environment, leaving the configured command
         // verbatim (§4.1 step 9): Laravel's env() prefers the real environment
         // over the .env file, so DB_DATABASE here wins for this invocation.
-        $result = $this->process->runShell($this->config->migrateCommand, $worktreePath, [
-            'DB_DATABASE' => $databaseName,
-        ]);
+        // DESKHAND_* facts ride alongside; DB_DATABASE takes precedence.
+        $result = $this->process->runShell(
+            $this->config->migrateCommand,
+            $worktreePath,
+            array_merge($env, ['DB_DATABASE' => $databaseName]),
+        );
 
         if ($result->failed()) {
             throw new DatabaseProvisionException("Unable to migrate database {$databaseName}: ".trim($result->stderr));
         }
     }
 
-    public function seed(string $worktreePath): void
+    public function seed(string $worktreePath, array $env = []): void
     {
-        $result = $this->process->runShell($this->config->seedCommand, $worktreePath);
+        $result = $this->process->runShell($this->config->seedCommand, $worktreePath, $env);
 
         if ($result->failed()) {
             throw new DatabaseProvisionException('Unable to seed the database: '.trim($result->stderr));
         }
     }
 
-    public function verify(string $worktreePath): bool
+    public function verify(string $worktreePath, array $env = []): bool
     {
         $command = $this->config->testCommand;
 
@@ -143,6 +146,6 @@ final class LaravelProfile implements StackProfile
             $command = self::TEST_COMMAND_WITHOUT_PARALLEL;
         }
 
-        return $this->process->runShell($command, $worktreePath)->successful();
+        return $this->process->runShell($command, $worktreePath, $env)->successful();
     }
 }

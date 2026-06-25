@@ -202,6 +202,15 @@ it('is idempotent: a re-run reuses the worktree without duplicating it', functio
         ->and($this->registry->all())->toHaveCount(1);
 });
 
+it('passes the DESKHAND_* facts to migrate and verify', function () {
+    makeUpRunner($this)->run(upRequest($this));
+
+    expect($this->profile->migrateEnv['DESKHAND_SLUG'])->toBe('feature-billing')
+        ->and($this->profile->migrateEnv['DESKHAND_DB_NAME'])->toBe('database/deskhand/feature-billing.sqlite')
+        ->and($this->profile->verifyEnv['DESKHAND_BRANCH'])->toBe('feature/billing')
+        ->and($this->profile->verifyEnv['DESKHAND_SERVE_PORT'])->not->toBe('');
+});
+
 it('runs post-up hooks verbatim with the DESKHAND_* facts', function () {
     makeUpRunner($this, ['post_up_hooks' => ['php artisan cache:clear']])->run(upRequest($this));
 
