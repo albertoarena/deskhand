@@ -41,6 +41,36 @@ composer validate --strict
 
 Fix style automatically with `vendor/bin/pint`.
 
+### MySQL integration tests (optional)
+
+The MySQL database-provisioner tests hit a real server. They **skip themselves**
+unless `DESKHAND_TEST_MYSQL_*` environment variables are set, so the default
+`vendor/bin/pest` run and CI stay green without a database. The SQLite tests need
+no setup.
+
+To run them, create a throwaway user scoped to a `deskhand_test_%` name prefix —
+the tests only ever create and drop databases under that prefix, and clean up
+after themselves:
+
+```sql
+CREATE USER 'deskhand_test'@'localhost' IDENTIFIED BY 'deskhand_test';
+GRANT ALL PRIVILEGES ON `deskhand\_test\_%`.* TO 'deskhand_test'@'localhost';
+FLUSH PRIVILEGES;
+```
+
+Then point the suite at it (never commit real credentials — see public-history
+hygiene below):
+
+```bash
+DESKHAND_TEST_MYSQL_HOST=127.0.0.1 \
+DESKHAND_TEST_MYSQL_PORT=3306 \
+DESKHAND_TEST_MYSQL_USER=deskhand_test \
+DESKHAND_TEST_MYSQL_PASSWORD=deskhand_test \
+vendor/bin/pest
+```
+
+`pdo_mysql` must be enabled in the PHP that runs the tests.
+
 ## Standards
 
 ### TDD is required
