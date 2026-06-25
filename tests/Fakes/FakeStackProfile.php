@@ -31,7 +31,7 @@ final class FakeStackProfile implements StackProfile
         return 'fake';
     }
 
-    public function envOverrides(WorktreeRecord $record): array
+    public function envOverrides(WorktreeRecord $record, array $baseEnv, string $projectName): array
     {
         return $this->overrides;
     }

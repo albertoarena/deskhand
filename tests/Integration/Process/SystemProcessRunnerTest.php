@@ -55,3 +55,23 @@ it('enforces a timeout', function () {
 
     expect($result->failed())->toBeTrue();
 });
+
+it('runs a shell command with variable expansion and pipes', function () {
+    $result = $this->runner->runShell('printf %s "$DESKHAND_X" | tr a-z A-Z', $this->dir, ['DESKHAND_X' => 'shell']);
+
+    expect($result->successful())->toBeTrue()
+        ->and($result->stdout)->toBe('SHELL');
+});
+
+it('captures a non-zero exit from a shell command', function () {
+    $result = $this->runner->runShell('exit 4', $this->dir);
+
+    expect($result->failed())->toBeTrue()
+        ->and($result->exitCode)->toBe(4);
+});
+
+it('runs a shell command in the given working directory', function () {
+    file_put_contents($this->dir.'/marker.txt', 'shell-cwd');
+
+    expect($this->runner->runShell('cat marker.txt', $this->dir)->stdout)->toBe('shell-cwd');
+});

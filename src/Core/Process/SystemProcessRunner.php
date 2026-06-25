@@ -9,7 +9,9 @@ use Symfony\Component\Process\Process;
 
 /**
  * The one place deskhand touches the real process layer (safety invariant #8).
- * Wraps symfony/process: argv-style commands (never a shell string), a working
+ * Wraps symfony/process: argv-style commands via run() for deskhand's own
+ * internal commands (never a shell string), and verbatim shell strings via
+ * runShell() for user-configured commands and hooks (§9). Both honour a working
  * directory, env vars merged over the inherited environment, and an optional
  * timeout (null disables it).
  *
@@ -23,8 +25,16 @@ final class SystemProcessRunner implements ProcessRunner
 
     public function run(array $command, string $workingDirectory, array $env = [], ?float $timeout = null): ProcessResult
     {
-        $process = new Process($command, $workingDirectory, $env, null, $timeout);
+        return $this->execute(new Process($command, $workingDirectory, $env, null, $timeout));
+    }
 
+    public function runShell(string $command, string $workingDirectory, array $env = [], ?float $timeout = null): ProcessResult
+    {
+        return $this->execute(Process::fromShellCommandline($command, $workingDirectory, $env, null, $timeout));
+    }
+
+    private function execute(Process $process): ProcessResult
+    {
         try {
             $process->run();
         } catch (ProcessTimedOutException $e) {

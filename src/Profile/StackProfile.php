@@ -22,11 +22,14 @@ interface StackProfile
 
     /**
      * Per-worktree `.env` overrides this profile contributes (DB connection,
-     * APP_NAME tag, ports, conditional Redis), given the resolved record.
+     * APP_NAME tag, app URL, conditional Redis), given the resolved record, the
+     * parsed base `.env` (for values like the base APP_NAME), and the project
+     * directory name (the APP_NAME fallback when the base has none).
      *
+     * @param  array<string, string>  $baseEnv
      * @return array<string, string>
      */
-    public function envOverrides(WorktreeRecord $record): array;
+    public function envOverrides(WorktreeRecord $record, array $baseEnv, string $projectName): array;
 
     /**
      * Extra overrides forced into `.env.testing` (safe drivers: array
