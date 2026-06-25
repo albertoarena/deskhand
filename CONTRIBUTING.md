@@ -19,6 +19,15 @@ php bin/deskhand --version
 php bin/deskhand list
 ```
 
+### Dependency resolution is pinned to PHP 8.3
+
+`composer.json` sets `config.platform.php` to `8.3.0`, so dependency
+resolution always targets the support floor regardless of which PHP you
+run locally. Run plain `composer update` even if your machine is on 8.4
+or 8.5 — the lock will stay installable on every supported version. Do
+not remove the platform pin or hand-edit the lock; doing so can select
+packages that need a newer PHP and break the 8.3 CI job.
+
 ## Running the checks
 
 All of these must pass before a PR is merged; CI runs them across PHP 8.3, 8.4, and 8.5.
