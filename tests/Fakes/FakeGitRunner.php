@@ -11,6 +11,9 @@ final class FakeGitRunner implements GitRunner
 {
     public bool $isRepository = true;
 
+    /** When set, repositoryRoot() returns this regardless of the directory. */
+    public ?string $root = null;
+
     /** @var list<string> */
     private array $branches = [];
 
@@ -29,7 +32,7 @@ final class FakeGitRunner implements GitRunner
 
     public function repositoryRoot(string $directory): string
     {
-        return $directory;
+        return $this->root ?? $directory;
     }
 
     public function branchExists(string $branch, string $repositoryRoot): bool
