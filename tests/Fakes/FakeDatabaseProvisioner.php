@@ -31,6 +31,13 @@ final class FakeDatabaseProvisioner implements DatabaseProvisioner
         return $this->connectable;
     }
 
+    public function markExisting(string $name): void
+    {
+        if (! in_array($name, $this->existing, true)) {
+            $this->existing[] = $name;
+        }
+    }
+
     public function exists(string $name): bool
     {
         return in_array($name, $this->existing, true);
