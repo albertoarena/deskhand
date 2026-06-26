@@ -52,8 +52,20 @@ deskhand down feature/billing
 | `deskhand down <branch\|slug>` | Tear down, dropping only deskhand-created resources |
 | `deskhand list` | List all deskhand-managed worktrees |
 | `deskhand status [<branch\|slug>]` | Health-check managed worktrees |
+| `deskhand skill:install` | Install the Claude Code skill into `.claude/skills` (`--global` for the user) |
 
 Key flags on `up`: `--path`, `--db=sqlite|mysql`, `--shared-db`, `--url`, `--no-envaudit`, `--no-redis-isolation`, `--no-verify`. Full reference in the docs.
+
+## Claude Code skill
+
+deskhand ships a [Claude Code skill](./skill/SKILL.md) so agents know when and how
+to use it — and the safety rules they must respect. Install it into a project (or
+for your user with `--global`) so Claude Code discovers it:
+
+```bash
+deskhand skill:install            # → .claude/skills/deskhand/SKILL.md
+deskhand skill:install --global   # → ~/.claude/skills/deskhand/SKILL.md
+```
 
 ## How it isolates
 

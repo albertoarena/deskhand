@@ -6,6 +6,7 @@ namespace Deskhand\Console;
 
 use Deskhand\Console\Command\DownCommand;
 use Deskhand\Console\Command\ListCommand;
+use Deskhand\Console\Command\SkillInstallCommand;
 use Deskhand\Console\Command\StatusCommand;
 use Deskhand\Console\Command\UpCommand;
 use Deskhand\Core\Registry\DefaultRegistryLocator;
@@ -34,5 +35,6 @@ final class Application extends BaseApplication
         $this->addCommand(new DownCommand(new DefaultDownRunnerFactory));
         $this->addCommand(new ListCommand(new DefaultRegistryLocator));
         $this->addCommand(new StatusCommand(new DefaultStatusRunnerFactory));
+        $this->addCommand(new SkillInstallCommand);
     }
 }

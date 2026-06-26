@@ -1,4 +1,5 @@
 {
     "output": "build/deskhand.phar",
-    "compression": "GZ"
+    "compression": "GZ",
+    "files": ["skill/SKILL.md"]
 }
