@@ -41,6 +41,24 @@ vendor/bin/pint --test     # check style (CI mode)
 composer validate --strict
 ```
 
+## Acceptance testing (real Laravel, end-to-end)
+
+To validate any important change against a real Laravel app — not just the unit
+suite — use the harnesses in `scripts/acceptance/` (see its `README.md`):
+
+```bash
+scripts/acceptance/parallel-worktrees.sh   # scaffolds Laravel, provisions N
+                                           # isolated worktrees, runs a workload
+                                           # concurrently, asserts isolation,
+                                           # tears down. Prints ACCEPTANCE: PASS.
+```
+
+- For the real parallel-AI-agents use case, follow `docs/acceptance/ai-agents.md`.
+- A gated Pest round-trip also exists: `DESKHAND_TEST_LARAVEL=1 vendor/bin/pest`.
+- **Pitfall:** deskhand resolves the repo from the current directory — always run
+  it (and these harnesses' provisioning) from *inside the target app*, or it will
+  act on the wrong repo.
+
 ## Build order
 
 Follow the sequence in `docs/implementation.md` §16: skeleton → interfaces + fakes → core subsystems (test-first) → concrete git/process impls → `LaravelProfile` → commands (test-first, with the safety tests on `down`) → integration round-trip → CI → repo deliverables → skill → docs site → logo (last).

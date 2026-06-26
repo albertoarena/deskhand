@@ -67,6 +67,34 @@ deskhand creates and destroys databases, so trust matters. The cardinal rule: **
 
 Zero-config works for a vanilla Laravel app. A committed `deskhand.yaml` covers per-project needs — including custom migrate/seed/test commands (e.g. a project's own `php artisan migrations`), port ranges, seeding, URL strategy (`serve` / Herd / Valet / custom), and post-up hooks. See the configuration reference in the docs.
 
+## Acceptance testing
+
+deskhand has been exercised end-to-end against a real Laravel app: `up` provisions
+and verifies an isolated worktree (real composer, npm, artisan, migrate and a green
+suite), and three coding agents then worked the **same codebase in parallel** —
+each in its own worktree with a distinct database, ports and `.env` — with zero
+collisions, before `down` removed only what deskhand created.
+
+You can replicate this two ways:
+
+- **Scripted (routine, ~free).** Scaffolds a fresh Laravel app, provisions N
+  isolated worktrees, runs a deterministic workload **concurrently** in each,
+  asserts isolation (distinct databases/ports, base untouched) and tears them down:
+
+  ```bash
+  scripts/acceptance/parallel-worktrees.sh        # 3 workers (default)
+  WORKERS=5 scripts/acceptance/parallel-worktrees.sh
+  ```
+
+  Prints `ACCEPTANCE: PASS`. Requires `composer` and `php` on `PATH`.
+
+- **With real AI agents (milestone).** Follow
+  [`docs/acceptance/ai-agents.md`](./docs/acceptance/ai-agents.md) to drive actual
+  coding agents in parallel worktrees — the real use case.
+
+There is also a gated end-to-end test: `DESKHAND_TEST_LARAVEL=1 vendor/bin/pest`
+runs the full round-trip against a scaffolded Laravel app (skipped by default).
+
 ## Documentation
 
 Full docs: **https://albertoarena.github.io/deskhand**
