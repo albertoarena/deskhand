@@ -1,0 +1,39 @@
+name: release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build and attach PHAR
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+          tools: composer:v2, box
+          ini-values: phar.readonly=0
+
+      - name: Install runtime dependencies
+        run: composer install --no-interaction --prefer-dist --no-dev
+
+      - name: Build the PHAR
+        run: box compile
+
+      - name: Verify the PHAR runs
+        run: php build/deskhand.phar --version
+
+      - name: Attach the PHAR to the release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/deskhand.phar

@@ -1,0 +1,4 @@
+{
+    "output": "build/deskhand.phar",
+    "compression": "GZ"
+}
