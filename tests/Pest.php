@@ -48,6 +48,34 @@ function deskhandRemoveDir(string $dir): void
 }
 
 /**
+ * Recursively copy a directory tree (used to stage a committed test fixture into
+ * a throwaway working tree). Preserves the executable bit so stub binaries stay
+ * runnable.
+ */
+function deskhandCopyDir(string $source, string $destination): void
+{
+    mkdir($destination, 0o775, true);
+
+    $items = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator($source, FilesystemIterator::SKIP_DOTS),
+        RecursiveIteratorIterator::SELF_FIRST,
+    );
+
+    foreach ($items as $item) {
+        $target = $destination.'/'.$items->getSubPathname();
+
+        if ($item->isDir()) {
+            mkdir($target, 0o775, true);
+
+            continue;
+        }
+
+        copy($item->getPathname(), $target);
+        chmod($target, $item->getPerms() & 0o777);
+    }
+}
+
+/**
  * A canonical SQLite worktree record matching the §5.1 example shape,
  * shared across registry/record tests.
  */

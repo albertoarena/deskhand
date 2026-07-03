@@ -1,0 +1,161 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+/*
+ * Stub `artisan` for deskhand's hermetic integration fixture.
+ *
+ * This is NOT Laravel. It responds to exactly the four artisan commands deskhand
+ * invokes during `up` — key:generate, storage:link, migrate, test — with
+ * realistic exit codes and output, so the real git / process / SQLite /
+ * filesystem wiring is exercised end-to-end without pulling in the framework
+ * (implementation.md §11, default integration tier). `migrate` does real work
+ * against SQLite and `test` verifies that work, so a broken provision genuinely
+ * fails the suite rather than passing on a hollow stub.
+ *
+ * It is invoked as `php artisan <command>` (deskhand always prefixes `php`), so
+ * no executable bit is required.
+ */
+
+$command = $argv[1] ?? '';
+
+exit(match ($command) {
+    'key:generate' => keyGenerate(),
+    'storage:link' => storageLink(),
+    'migrate' => migrate(),
+    'test' => test(),
+    default => fail("There are no commands defined in the \"{$command}\" namespace."),
+});
+
+function fail(string $message): int
+{
+    fwrite(STDERR, $message.PHP_EOL);
+
+    return 1;
+}
+
+/**
+ * Resolve the SQLite database path the way Laravel would: the live environment
+ * (deskhand sets DB_DATABASE for migrate) takes precedence over the .env files,
+ * and `.env.testing` (used by `artisan test`) takes precedence over `.env`.
+ */
+function databasePath(): ?string
+{
+    $fromEnv = getenv('DB_DATABASE');
+
+    if (is_string($fromEnv) && $fromEnv !== '') {
+        return $fromEnv;
+    }
+
+    foreach (['.env.testing', '.env'] as $file) {
+        if (! is_file($file)) {
+            continue;
+        }
+
+        foreach (file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
+            if (preg_match('/^DB_DATABASE=(.*)$/', $line, $matches) === 1) {
+                $value = trim($matches[1], " \t\"'");
+
+                if ($value !== '') {
+                    return $value;
+                }
+            }
+        }
+    }
+
+    return null;
+}
+
+function keyGenerate(): int
+{
+    if (! is_file('.env')) {
+        return fail('.env not found; cannot set the application key.');
+    }
+
+    $key = 'base64:'.base64_encode(random_bytes(32));
+    $contents = (string) file_get_contents('.env');
+
+    $contents = preg_match('/^APP_KEY=.*$/m', $contents) === 1
+        ? preg_replace('/^APP_KEY=.*$/m', 'APP_KEY='.$key, $contents)
+        : rtrim($contents, "\n")."\nAPP_KEY=".$key."\n";
+
+    file_put_contents('.env', $contents);
+    fwrite(STDOUT, 'Application key set successfully.'.PHP_EOL);
+
+    return 0;
+}
+
+function storageLink(): int
+{
+    $target = 'storage/app/public';
+    $link = 'public/storage';
+
+    if (! is_dir('public') && ! mkdir('public', 0o775, true) && ! is_dir('public')) {
+        return fail('Unable to create the public directory.');
+    }
+
+    if (is_link($link) || is_dir($link)) {
+        fwrite(STDOUT, 'The [public/storage] link already exists.'.PHP_EOL);
+
+        return 0;
+    }
+
+    if (! @symlink($target, $link)) {
+        return fail('Unable to create the [public/storage] link.');
+    }
+
+    fwrite(STDOUT, 'The [public/storage] link has been connected to [storage/app/public].'.PHP_EOL);
+
+    return 0;
+}
+
+function migrate(): int
+{
+    $path = databasePath();
+
+    if ($path === null) {
+        return fail('No DB_DATABASE configured; nothing to migrate.');
+    }
+
+    try {
+        $pdo = new PDO('sqlite:'.$path);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $pdo->exec('CREATE TABLE IF NOT EXISTS migrations (id INTEGER PRIMARY KEY, migration TEXT NOT NULL)');
+        // Idempotent, like a real migration that never re-runs once applied.
+        $pdo->exec("INSERT OR IGNORE INTO migrations (id, migration) VALUES (1, '2026_01_01_000000_create_desks_table')");
+        $pdo->exec('CREATE TABLE IF NOT EXISTS desks (id INTEGER PRIMARY KEY, name TEXT NOT NULL)');
+    } catch (PDOException $e) {
+        return fail('Migration failed: '.$e->getMessage());
+    }
+
+    fwrite(STDOUT, 'Migrations table created successfully.'.PHP_EOL);
+
+    return 0;
+}
+
+function test(): int
+{
+    $path = databasePath();
+
+    if ($path === null || ! is_file($path)) {
+        return fail('FAILED: the database has not been provisioned.');
+    }
+
+    try {
+        $pdo = new PDO('sqlite:'.$path);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $applied = (int) $pdo->query('SELECT COUNT(*) FROM migrations')->fetchColumn();
+    } catch (PDOException $e) {
+        return fail('FAILED: '.$e->getMessage());
+    }
+
+    if ($applied < 1) {
+        return fail('FAILED: migrations have not run against the worktree database.');
+    }
+
+    fwrite(STDOUT, 'PASS  Tests\\Feature\\DeskTest'.PHP_EOL);
+    fwrite(STDOUT, 'Tests:    1 passed (1 assertions)'.PHP_EOL);
+
+    return 0;
+}

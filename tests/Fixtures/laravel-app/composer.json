@@ -1,0 +1,12 @@
+{
+    "name": "deskhand/fixture-laravel-app",
+    "description": "Hermetic, framework-free stand-in for a Laravel app, used by deskhand's default integration round-trip. Not a real Laravel app; see artisan.",
+    "type": "project",
+    "license": "MIT",
+    "require": {
+        "php": ">=8.3"
+    },
+    "config": {
+        "optimize-autoloader": false
+    }
+}
