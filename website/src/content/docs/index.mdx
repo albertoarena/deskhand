@@ -1,0 +1,77 @@
+---
+title: deskhand
+description: Isolated, test-passing Laravel environments per worktree, for running parallel AI coding agents.
+template: splash
+hero:
+  tagline: Isolated, test-passing Laravel environments per worktree, for running parallel AI coding agents.
+  actions:
+    - text: Get started
+      link: /deskhand/getting-started/installation/
+      icon: right-arrow
+      variant: primary
+    - text: View on GitHub
+      link: https://github.com/albertoarena/deskhand
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## Why parallel agents need it
+
+Running several AI coding agents against one checkout causes collisions: agents
+overwrite each other's files, corrupt a shared database (fatal for event-sourcing
+projection rebuilds), and read each other's half-finished work.
+
+Git worktrees isolate **code** — but not the runtime environment. A fresh
+worktree has no `.env`, no `APP_KEY`, no `vendor/`, no database, no storage link,
+and every dev server fights over the same ports.
+
+deskhand closes that gap. `deskhand up <branch>` turns a bare worktree into a
+fully provisioned, **isolated, test-passing** Laravel environment — its own
+database, ports, env, and a fresh app key — and verifies it by running your Pest
+suite. `deskhand down` tears it all down, dropping **only** what deskhand created.
+
+> Each agent gets its own **desk** (an isolated worktree environment). deskhand
+> is the **hand** that sets it up and keeps it working.
+
+## Quick example
+
+```bash
+# Provision an isolated, verified environment for a branch
+deskhand up feature/billing
+
+# ... point an agent at .claude/worktrees/feature-billing and let it work ...
+
+deskhand list                    # see what's running
+deskhand down feature/billing    # tear down — drops only what deskhand created
+```
+
+## What you get
+
+<CardGrid>
+  <Card title="Full database isolation" icon="seti:db">
+    Each worktree gets its own database (SQLite by default, `--db=mysql` when
+    needed), so migrations and projection rebuilds never collide.
+  </Card>
+  <Card title="Deterministic ports" icon="setting">
+    Ports are derived from the branch slug, so the same branch always gets the
+    same ports — stable across runs, no free-port scan.
+  </Card>
+  <Card title="Safe teardown" icon="trash">
+    `down` drops only what deskhand recorded creating. It **never** drops a
+    database it did not create.
+  </Card>
+  <Card title="Verified by your suite" icon="approve-check">
+    `up` runs your Pest suite and reports success only if it is green — a desk
+    is provisioned *and proven* runnable.
+  </Card>
+  <Card title="Own env & app key" icon="setting">
+    The base `.env` is copied (never symlinked) with a fresh `APP_KEY` per
+    worktree, so nothing bleeds across desks.
+  </Card>
+  <Card title="Stack profiles" icon="puzzle">
+    A Laravel profile ships in v1 behind a clean `StackProfile` seam; the generic
+    core stays framework-free.
+  </Card>
+</CardGrid>
