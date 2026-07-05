@@ -103,7 +103,22 @@ Never commit real secrets, credentials, tokens, or absolute machine paths — in
 - Branch from `main`, keep PRs focused.
 - Include tests for new behaviour and for any bug you fix.
 - Make sure the full check suite is green locally.
+- For any user-facing change, add an entry to the `[Unreleased]` section of [`CHANGELOG.md`](./CHANGELOG.md) (see [Changelog and releases](#changelog-and-releases)).
 - Describe what changed and why; if it touches a safety invariant or the public command/flag/config surface, call that out explicitly.
+
+## Changelog and releases
+
+deskhand follows [Semantic Versioning](https://semver.org) and keeps a
+human-written [`CHANGELOG.md`](./CHANGELOG.md) in
+[Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format. Every user-facing
+change records an entry under `[Unreleased]` in the same PR — new command, flag,
+or config key; changed behaviour; bug fix. Purely internal changes (refactors,
+tests, CI) need no entry.
+
+The full versioning rules (what counts as a breaking change) and the release
+process live in [`RELEASING.md`](./RELEASING.md). Releases are cut by maintainers:
+pushing a `vX.Y.Z` tag builds the PHAR and publishes a GitHub Release with the
+changelog section as its notes.
 
 ## Scope
 

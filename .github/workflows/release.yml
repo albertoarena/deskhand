@@ -33,7 +33,26 @@ jobs:
       - name: Verify the PHAR runs
         run: php build/deskhand.phar --version
 
+      - name: Extract release notes from the changelog
+        id: notes
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          notes=$(awk -v ver="$version" '
+            /^\[[^]]+\]: / { if (capture) exit }
+            /^## / {
+              if (capture) exit
+              if ($0 ~ "^## \\[" ver "\\]") { capture = 1; next }
+            }
+            capture { print }
+          ' CHANGELOG.md)
+          {
+            echo "body<<__NOTES__"
+            echo "$notes"
+            echo "__NOTES__"
+          } >> "$GITHUB_OUTPUT"
+
       - name: Attach the PHAR to the release
         uses: softprops/action-gh-release@v2
         with:
           files: build/deskhand.phar
+          body: ${{ steps.notes.outputs.body }}
