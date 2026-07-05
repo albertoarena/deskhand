@@ -4,7 +4,6 @@
 
 [![CI](https://img.shields.io/github/actions/workflow/status/albertoarena/deskhand/tests.yml?branch=main&label=CI)](https://github.com/albertoarena/deskhand/actions/workflows/tests.yml)
 [![Repo views](https://raw.githubusercontent.com/albertoarena/deskhand/traffic-data/badge-views.svg)](https://github.com/albertoarena/deskhand)
-[![Repo clones](https://raw.githubusercontent.com/albertoarena/deskhand/traffic-data/badge-clones.svg)](https://github.com/albertoarena/deskhand)
 [![PHP](https://img.shields.io/badge/PHP-8.3%2B-777BB4?logo=php&logoColor=white)](https://www.php.net)
 [![License](https://img.shields.io/badge/License-MIT-green)](./LICENSE)
 

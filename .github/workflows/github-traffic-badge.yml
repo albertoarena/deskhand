@@ -19,11 +19,3 @@ jobs:
           color: blue
           label: 'Repo views'
           output: badge-views.svg
-
-      - uses: albertoarena/github-traffic-badge@v1
-        with:
-          token: ${{ secrets.TRAFFIC_TOKEN }}
-          metric: clones
-          color: green
-          label: 'Repo clones'
-          output: badge-clones.svg
