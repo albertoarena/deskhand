@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="deskhand">
+  <!-- Same bell as icon.svg (button on a short stem); base slightly bolder for small sizes. -->
+  <path d="M6 24 C6 10 26 10 26 24 Z" fill="#BE7B18"/>
+  <rect x="14.9" y="7" width="2.2" height="5.5" rx="1.1" fill="#1F2328"/>
+  <circle cx="16" cy="7" r="2.5" fill="#1F2328"/>
+  <rect x="3.5" y="23.7" width="25" height="3.7" rx="1.85" fill="#1F2328"/>
+</svg>
