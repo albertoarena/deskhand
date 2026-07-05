@@ -1,5 +1,10 @@
 # deskhand
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/albertoarena/deskhand/main/art/cover-dark.png">
+  <img src="https://raw.githubusercontent.com/albertoarena/deskhand/main/art/cover-light.png" alt="deskhand: isolated, test-passing Laravel environments per worktree, for running parallel AI coding agents">
+</picture>
+
 **deskhand — isolated, test-passing Laravel environments per worktree, for running parallel AI coding agents.**
 
 [![CI](https://img.shields.io/github/actions/workflow/status/albertoarena/deskhand/tests.yml?branch=main&label=CI)](https://github.com/albertoarena/deskhand/actions/workflows/tests.yml)
