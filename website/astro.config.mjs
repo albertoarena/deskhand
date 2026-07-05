@@ -11,6 +11,13 @@ export default defineConfig({
       title: 'deskhand',
       description:
         'Isolated, test-passing Laravel environments per worktree, for running parallel AI coding agents.',
+      logo: {
+        light: './src/assets/logo.svg',
+        dark: './src/assets/logo-dark.svg',
+        replacesTitle: true,
+      },
+      favicon: '/favicon.svg',
+      customCss: ['./src/styles/custom.css'],
       social: [
         {
           icon: 'github',

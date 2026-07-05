@@ -1,0 +1,17 @@
+/*
+ * deskhand "Brass & Ink" accent — a warm sibling to envaudit's green.
+ * Starlight's base :root is the dark theme; [data-theme='light'] overrides it.
+ */
+:root {
+  /* dark mode */
+  --sl-color-accent-low: #3a2a12;
+  --sl-color-accent: #e3a24a;
+  --sl-color-accent-high: #f2cf9b;
+}
+
+:root[data-theme='light'] {
+  /* light mode */
+  --sl-color-accent-low: #f6e7ce;
+  --sl-color-accent: #be7b18;
+  --sl-color-accent-high: #8a5510;
+}
