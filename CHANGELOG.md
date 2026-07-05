@@ -9,6 +9,8 @@ release is cut.
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-07-05
+
 ### Added
 
 - `deskhand up <branch>` — provision a fully isolated, verified Laravel
@@ -33,4 +35,5 @@ release is cut.
   GitHub Releases.
 - Documentation site (Astro Starlight) at <https://albertoarena.github.io/deskhand>.
 
-[Unreleased]: https://github.com/albertoarena/deskhand/commits/main
+[Unreleased]: https://github.com/albertoarena/deskhand/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/albertoarena/deskhand/releases/tag/v1.0.0
