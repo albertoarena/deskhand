@@ -2,15 +2,19 @@
 
 **deskhand — isolated, test-passing Laravel environments per worktree, for running parallel AI coding agents.**
 
+[![CI](https://img.shields.io/github/actions/workflow/status/albertoarena/deskhand/tests.yml?branch=main&label=CI)](https://github.com/albertoarena/deskhand/actions/workflows/tests.yml)
+[![Repo views](https://raw.githubusercontent.com/albertoarena/deskhand/traffic-data/badge-views.svg)](https://github.com/albertoarena/deskhand)
+[![Repo clones](https://raw.githubusercontent.com/albertoarena/deskhand/traffic-data/badge-clones.svg)](https://github.com/albertoarena/deskhand)
+[![PHP](https://img.shields.io/badge/PHP-8.3%2B-777BB4?logo=php&logoColor=white)](https://www.php.net)
+[![License](https://img.shields.io/badge/License-MIT-green)](./LICENSE)
+
 Running several AI coding agents against one checkout causes collisions: agents overwrite each other's files, corrupt a shared database (fatal for event-sourcing projection rebuilds), and read each other's half-finished work. Git worktrees isolate **code** — but not the runtime environment. A fresh worktree has no `.env`, no `APP_KEY`, no `vendor/`, no database, no storage link, and every dev server fights over the same ports.
 
 deskhand closes that gap. `deskhand up <branch>` turns a bare worktree into a fully provisioned, **isolated, test-passing** Laravel environment — its own database, ports, env, and a fresh app key — and verifies it by running your Pest suite. `deskhand down` tears it all down, dropping **only** what deskhand created.
 
 > Each agent gets its own **desk** (an isolated worktree environment). deskhand is the **hand** that sets it up and keeps it working.
 
-## Status
-
-🚧 Early development. The full specification lives in [`docs/implementation.md`](./docs/implementation.md).
+**Documentation:** https://albertoarena.github.io/deskhand
 
 ## Requirements
 
@@ -106,10 +110,6 @@ You can replicate this two ways:
 
 There is also a gated end-to-end test: `DESKHAND_TEST_LARAVEL=1 vendor/bin/pest`
 runs the full round-trip against a scaffolded Laravel app (skipped by default).
-
-## Documentation
-
-Full docs: **https://albertoarena.github.io/deskhand**
 
 ## Contributing
 
