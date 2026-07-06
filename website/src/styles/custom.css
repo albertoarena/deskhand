@@ -1,17 +1,41 @@
 /*
- * deskhand "Brass & Ink" accent — a warm sibling to envaudit's green.
+ * deskhand "Brass & Ink" theme — a warm sibling to envaudit's green.
  * Starlight's base :root is the dark theme; [data-theme='light'] overrides it.
+ * We re-tint the accent (links, active nav) and warm the surfaces (page,
+ * sidebar, borders, inline code) toward paper/ink, leaving the neutral text
+ * grays for legibility.
  */
+
+/* Dark mode */
 :root {
-  /* dark mode */
   --sl-color-accent-low: #3a2a12;
   --sl-color-accent: #e3a24a;
   --sl-color-accent-high: #f2cf9b;
+  --sl-color-text-accent: #e3a24a;
+
+  --sl-color-bg: #17150f;
+  --sl-color-bg-nav: #17150f;
+  --sl-color-bg-sidebar: #131109;
+  --sl-color-bg-inline-code: #241f14;
+
+  --sl-color-hairline: #2c2820;
+  --sl-color-hairline-light: #35302650;
+  --sl-color-hairline-shade: #201d15;
 }
 
+/* Light mode */
 :root[data-theme='light'] {
-  /* light mode */
   --sl-color-accent-low: #f6e7ce;
   --sl-color-accent: #be7b18;
   --sl-color-accent-high: #8a5510;
+  --sl-color-text-accent: #9a6510;
+
+  --sl-color-bg: #fbf7f0;
+  --sl-color-bg-nav: #fbf7f0;
+  --sl-color-bg-sidebar: #f5eee0;
+  --sl-color-bg-inline-code: #f1e8d7;
+
+  --sl-color-hairline: #ecdfc8;
+  --sl-color-hairline-light: #f0e7d5;
+  --sl-color-hairline-shade: #efe6d3;
 }
